@@ -46,7 +46,7 @@ def interface(lines, colors):
     question = ('AB', 'BC', 'CD', 'DA', 'EF', 'FG', 'GH', 'HE', 'AE', 'BF', 'CG', 'DH')
     style_options = ("0", "1", "2", "3")
 
-    show_color_dropdown = st.checkbox("Show Color Dropdown", value=True)
+    show_color_dropdown = st.checkbox("Show Color Dropdown", value=False)
 
     if show_color_dropdown:
         color_options = ('black', 'red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown')
