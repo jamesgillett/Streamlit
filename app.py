@@ -82,7 +82,7 @@ def interface(lines):
     # Add a button to clear the inputs
         if st.button("Clear Inputs"):
         # Reset the state in st.session_state
-            st.experimental_rerun()   
+            st.rerun()   
     
     return(lines)
 
