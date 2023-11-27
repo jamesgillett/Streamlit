@@ -2,6 +2,9 @@
 Programme to display a 3D cube with lines of user defined styles. 
 Created by James Gillett for Prof. David Fanning at the Univeristy of Manchester
 '''
+import inspect
+import textwrap
+
 import streamlit as st
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
