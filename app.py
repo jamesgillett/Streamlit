@@ -78,12 +78,7 @@ def interface(lines):
         break
     col1,col2 = st.columns(2)   
     with col1: st.write("Total = ", total) 
-    with col2: 
-    # Add a button to clear the inputs
-        if st.button("Clear Inputs"):
-        # Reset the state in st.session_state
-            st.rerun()   
-    
+
     return(lines)
 
 st.title("The Quotation Cube")
