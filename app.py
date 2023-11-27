@@ -3,14 +3,16 @@ Programme to display a 3D cube with lines of user defined styles.
 Created by James Gillett for Prof. David Fanning at the Univeristy of Manchester
 '''
 import streamlit as st
+import io
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+ax = fig.add_subplot(projection='3d')
+ax.set_aspect("equal")
 plt.axis('off')
 
-#Labels and axis
+# Labels and axis
 def square():
     vertices = [(0,0,1), (1,0,1), (1,0,0),(0,0,0), (0,1,1), (1,1,1), (1,1,0), (0,1,0)]
     letters = ['A','B','C','D','E','F','G','H']
@@ -20,8 +22,7 @@ def square():
         ax.text(each[0],each[1],each[2], letters[i], size=15, zorder=10, color='k')
         i+=1
 
-
-#Takes user input and plots square
+# Takes user input and plots square
 def styleSquare(lines):   
     style = ('none', 'dotted', 'dashed', 'solid')
                
@@ -42,48 +43,26 @@ def styleSquare(lines):
     ax.plot([1,1],ys=[0,1], zs=[0,0], color='k', linestyle=style[lines['CG']]) #CG bottom_right
     ax.plot([0,0],ys=[0,1], zs=[1,1], color='k', linestyle=style[lines['AE']]) #AE top_left
     ax.plot([1,1],ys=[0,1], zs=[1,1], color='k', linestyle=style[lines['BF']]) #BF top_right
-    
-  
-#User interface
-#def interface(lines):
- #   total = 0
-  #  question = ('AB', 'BC','CD','DA','EF','FG','GH','HE','AE','BF','CG','DH')
-   # print('Please complete the following: \n 0 = no line \n 1 = dotted \n 2 = dashed \n 3 = solid')
-    
-   # for i2 in question: 
-    #    while True:
-     #       lines[i2] = input(i2 + '= ')
-      #      if lines[i2] == '0' or lines[i2]== '1' or lines[i2]== '2' or lines[i2]== '3':
-       #         break
-        #    else:
-        #        print('Please input 0, 1, 2, or 3')
-   #     lines[i2] = int(lines[i2])
-   #     total += lines[i2]
-   # print("\n'Score' for cube = " + str(total))
-   # return(lines)
 
-lines = {'AB':'','BC':'','CD':'','DA':'','EF':'','FG':'','GH':'','HE':'','AE':'','BF':'','CG':'','DH':''}    
-square()
-
+# User interface 
 def interface(lines):
-  #  with st.sidebar:
     total = 0
-    question = ('AB', 'BC','CD','DA','EF','FG','GH','HE','AE','BF','CG','DH')
-    st.write('Please complete the following: \n 0 = no line \n 1 = dotted \n 2 = dashed \n 3 = solid')
-        
-    lines['AB']=st.radio("AB", ("n","d","da", "s"), horizontal=True)
-    lines['BC']=st.radio("BC", ("n","d","da", "s"), horizontal=True)
-    lines['CD']=st.radio("CD", ("n","d","da", "s"), horizontal=True)
-    lines['DA']=st.radio("DA", ("n","d","da", "s"), horizontal=True)
-    lines['EF']=st.radio("EF", ("n","d","da", "s"), horizontal=True)
-    lines['FG']=st.radio("FG", ("n","d","da", "s"), horizontal=True)
-    lines['GH']=st.radio("GH", ("n","d","da", "s"), horizontal=True)
-    lines['HE']=st.radio("HE", ("n","d","da", "s"), horizontal=True)
-    lines['AE']=st.radio("AE", ("n","d","da", "s"), horizontal=True)
-    lines['BF']=st.radio("BF", ("n","d","da", "s"), horizontal=True)
-    lines['CG']=st.radio("CG", ("n","d","da", "s"), horizontal=True)
-    lines['DH']=st.radio("DH", ("n","d","da", "s"), horizontal=True)
-        
+    question = ('AB', 'BC', 'CD', 'DA', 'EF', 'FG', 'GH', 'HE', 'AE', 'BF', 'CG', 'DH')
+    style_options = ("0", "1", "2", "3")
+
+    # Create a dictionary to store user responses
+    lines = {q: "" for q in question}
+    st.write('0 = no line | 1 = dotted | 2 = dashed | 3 = solid')
+
+    # Create three columns
+    cols = st.columns(3)
+
+    # Iterate through columns
+    for i, col in enumerate(cols):
+        # Iterate through questions in each column
+        for q in question[i::3]:
+            lines[q] = col.radio(q, style_options, horizontal=True)
+
     while True:
         for i2 in question: 
             if lines[i2] == "n":
@@ -95,11 +74,36 @@ def interface(lines):
             elif lines[i2] =="s":
                 lines[i2] = 3
             lines[i2] = int(lines[i2])
-        break      
+            total += lines[i2]
+        break
+    col1,col2 = st.columns(2)   
+    with col1: st.write("Total = ", total) 
+    with col2: 
+    # Add a button to clear the inputs
+        if st.button("Clear Inputs"):
+        # Reset the state in st.session_state
+            st.experimental_rerun()   
+    
     return(lines)
 
+st.title("The Quotation Cube")
+
+lines = {'AB':'','BC':'','CD':'','DA':'','EF':'','FG':'','GH':'','HE':'','AE':'','BF':'','CG':'','DH':''}    
+square()
+
 lines = interface(lines)
-st.write(lines)
 
 styleSquare(lines)
 st.pyplot(fig)
+
+# Download button
+fn = 'cube.png'
+img = io.BytesIO()
+plt.savefig(img, format='png')
+
+btn = st.download_button(
+   label="Download cube",
+   data=img,
+   file_name=fn,
+   mime="image/png"
+)
