@@ -1,7 +1,3 @@
-'''
-Programme to display a 3D cube with lines of user defined styles. 
-Created by James Gillett for Prof. David Fanning at the Univeristy of Manchester
-'''
 import streamlit as st
 import io
 import matplotlib.pyplot as plt
@@ -23,35 +19,44 @@ def square():
         i+=1
 
 # Takes user input and plots square
-def styleSquare(lines):   
+def styleSquare(lines, colors=None):   
     style = ('none', 'dotted', 'dashed', 'solid')
-               
-    #front
-    ax.plot([0,1],ys=[0,0], zs=[0,0], color='k', linestyle=style[lines['CD']]) #CD bottom
-    ax.plot([0,0],ys=[0,0], zs=[0,1], color='k', linestyle=style[lines['DA']]) #DA left
-    ax.plot([1,1],ys=[0,0], zs=[0,1], color='k', linestyle=style[lines['BC']]) #BC right
-    ax.plot([0,1],ys=[0,0], zs=[1,1], color='k', linestyle=style[lines['AB']]) #AB top
-    
-    #back
-    ax.plot([0,1],ys=[1,1], zs=[0,0], color='k', linestyle=style[lines['GH']]) #GH bottom
-    ax.plot([0,0],ys=[1,1], zs=[0,1], color='k', linestyle=style[lines['HE']]) #HE left
-    ax.plot([1,1],ys=[1,1], zs=[0,1], color='k', linestyle=style[lines['FG']]) #FG right
-    ax.plot([0,1],ys=[1,1], zs=[1,1], color='k', linestyle=style[lines['EF']]) #EF top
-    
-    #joins
-    ax.plot([0,0],ys=[0,1], zs=[0,0], color='k', linestyle=style[lines['DH']]) #DH bottom_left
-    ax.plot([1,1],ys=[0,1], zs=[0,0], color='k', linestyle=style[lines['CG']]) #CG bottom_right
-    ax.plot([0,0],ys=[0,1], zs=[1,1], color='k', linestyle=style[lines['AE']]) #AE top_left
-    ax.plot([1,1],ys=[0,1], zs=[1,1], color='k', linestyle=style[lines['BF']]) #BF top_right
+
+    for key in lines.keys():
+        segment_style = style[lines[key]]
+
+        start, end = key[0], key[1]
+
+        start_index = ord(start) - ord('A')
+        end_index = ord(end) - ord('A')
+
+        if colors and colors[key] != '':
+            segment_color = colors[key]
+        else:
+            segment_color = 'k'  # Default to black if color is not specified
+
+        ax.plot([vertices[start_index][0], vertices[end_index][0]],
+                [vertices[start_index][1], vertices[end_index][1]],
+                [vertices[start_index][2], vertices[end_index][2]],
+                color=segment_color, linestyle=segment_style)
 
 # User interface 
-def interface(lines):
+def interface(lines, colors):
     total = 0
     question = ('AB', 'BC', 'CD', 'DA', 'EF', 'FG', 'GH', 'HE', 'AE', 'BF', 'CG', 'DH')
     style_options = ("0", "1", "2", "3")
 
+    show_color_dropdown = st.checkbox("Show Color Dropdown", value=True)
+
+    if show_color_dropdown:
+        color_options = ('black', 'red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown')
+    else:
+        color_options = [None] * len(question)
+
     # Create a dictionary to store user responses
     lines = {q: "" for q in question}
+    colors = {q: "" for q in question}
+
     st.write('0 = no line | 1 = dotted | 2 = dashed | 3 = solid')
 
     # Create three columns
@@ -61,7 +66,9 @@ def interface(lines):
     for i, col in enumerate(cols):
         # Iterate through questions in each column
         for q in question[i::3]:
-            lines[q] = col.radio(q, style_options, horizontal=True)
+            lines[q] = col.radio(f"{q} Style", style_options, horizontal=True)
+            if show_color_dropdown:
+                colors[q] = col.selectbox(f"{q} Color", color_options)
 
     while True:
         for i2 in question: 
@@ -76,19 +83,22 @@ def interface(lines):
             lines[i2] = int(lines[i2])
             total += lines[i2]
         break
-    col1,col2 = st.columns(2)   
+    col1, col2 = st.columns(2)   
     with col1: st.write("Total = ", total) 
 
-    return(lines)
+    return lines, colors
 
 st.title("The Quotation Cube")
 
-lines = {'AB':'','BC':'','CD':'','DA':'','EF':'','FG':'','GH':'','HE':'','AE':'','BF':'','CG':'','DH':''}    
+vertices = [(0, 0, 1), (1, 0, 1), (1, 0, 0), (0, 0, 0), (0, 1, 1), (1, 1, 1), (1, 1, 0), (0, 1, 0)]
+lines = {'AB': '', 'BC': '', 'CD': '', 'DA': '', 'EF': '', 'FG': '', 'GH': '', 'HE': '', 'AE': '', 'BF': '', 'CG': '', 'DH': ''}
+colors = {'AB': '', 'BC': '', 'CD': '', 'DA': '', 'EF': '', 'FG': '', 'GH': '', 'HE': '', 'AE': '', 'BF': '', 'CG': '', 'DH': ''}
+
 square()
 
-lines = interface(lines)
+lines, colors = interface(lines, colors)
 
-styleSquare(lines)
+styleSquare(lines, colors)
 st.pyplot(fig)
 
 # Download button
