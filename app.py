@@ -96,9 +96,10 @@ def interface(lines):
                 lines[i2] = 3
             lines[i2] = int(lines[i2])
         break      
+    return(lines)
 
-test = interface(lines)
-test
-#styleSquare(lines)
+lines = interface(lines)
+st.write(lines)
 
-#st.pyplot(fig)
+styleSquare(lines)
+st.pyplot(fig)
