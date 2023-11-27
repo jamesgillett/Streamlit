@@ -26,14 +26,14 @@ def styleSquare(lines):
     style = ('none', 'dotted', 'dashed', 'solid')
                
     #front
-    ax.plot([0,1],ys=[0,0], zs=[0,0], color='k', linestyle=style[lines['CD']]) #DC bottom
-    ax.plot([0,0],ys=[0,0], zs=[0,1], color='k', linestyle=style[lines['DA']]) #AD left
+    ax.plot([0,1],ys=[0,0], zs=[0,0], color='k', linestyle=style[lines['CD']]) #CD bottom
+    ax.plot([0,0],ys=[0,0], zs=[0,1], color='k', linestyle=style[lines['DA']]) #DA left
     ax.plot([1,1],ys=[0,0], zs=[0,1], color='k', linestyle=style[lines['BC']]) #BC right
     ax.plot([0,1],ys=[0,0], zs=[1,1], color='k', linestyle=style[lines['AB']]) #AB top
     
     #back
     ax.plot([0,1],ys=[1,1], zs=[0,0], color='k', linestyle=style[lines['GH']]) #GH bottom
-    ax.plot([0,0],ys=[1,1], zs=[0,1], color='k', linestyle=style[lines['HE']]) #EH left
+    ax.plot([0,0],ys=[1,1], zs=[0,1], color='k', linestyle=style[lines['HE']]) #HE left
     ax.plot([1,1],ys=[1,1], zs=[0,1], color='k', linestyle=style[lines['FG']]) #FG right
     ax.plot([0,1],ys=[1,1], zs=[1,1], color='k', linestyle=style[lines['EF']]) #EF top
     
@@ -43,30 +43,62 @@ def styleSquare(lines):
     ax.plot([0,0],ys=[0,1], zs=[1,1], color='k', linestyle=style[lines['AE']]) #AE top_left
     ax.plot([1,1],ys=[0,1], zs=[1,1], color='k', linestyle=style[lines['BF']]) #BF top_right
     
-    
+  
 #User interface
-def interface(lines):
-    total = 0
-    question = ('AB', 'BC','CD','DA','EF','FG','GH','HE','AE','BF','CG','DH')
-    print('Please complete the following: \n 0 = no line \n 1 = dotted \n 2 = dashed \n 3 = solid')
+#def interface(lines):
+ #   total = 0
+  #  question = ('AB', 'BC','CD','DA','EF','FG','GH','HE','AE','BF','CG','DH')
+   # print('Please complete the following: \n 0 = no line \n 1 = dotted \n 2 = dashed \n 3 = solid')
     
-    for i2 in question: 
-        while True:
-            lines[i2] = input(i2 + '= ')
-            if lines[i2] == '0' or lines[i2]== '1' or lines[i2]== '2' or lines[i2]== '3':
-                break
-            else:
-                print('Please input 0, 1, 2, or 3')
-        lines[i2] = int(lines[i2])
-        total += lines[i2]
-    print("\n'Score' for cube = " + str(total))
-    return(lines)
-    
+   # for i2 in question: 
+    #    while True:
+     #       lines[i2] = input(i2 + '= ')
+      #      if lines[i2] == '0' or lines[i2]== '1' or lines[i2]== '2' or lines[i2]== '3':
+       #         break
+        #    else:
+        #        print('Please input 0, 1, 2, or 3')
+   #     lines[i2] = int(lines[i2])
+   #     total += lines[i2]
+   # print("\n'Score' for cube = " + str(total))
+   # return(lines)
 
 lines = {'AB':'','BC':'','CD':'','DA':'','EF':'','FG':'','GH':'','HE':'','AE':'','BF':'','CG':'','DH':''}    
 square()
-lines = interface(lines)
-styleSquare(lines)
 
-st.pyplot(fig)
-plt.show()
+def interface(lines):
+  #  with st.sidebar:
+    total = 0
+    question = ('AB', 'BC','CD','DA','EF','FG','GH','HE','AE','BF','CG','DH')
+    st.write('Please complete the following: \n 0 = no line \n 1 = dotted \n 2 = dashed \n 3 = solid')
+        
+    lines['AB']=st.radio("AB", ("n","d","da", "s"), horizontal=True)
+    lines['BC']=st.radio("BC", ("n","d","da", "s"), horizontal=True)
+    lines['CD']=st.radio("CD", ("n","d","da", "s"), horizontal=True)
+    lines['DA']=st.radio("DA", ("n","d","da", "s"), horizontal=True)
+    lines['EF']=st.radio("EF", ("n","d","da", "s"), horizontal=True)
+    lines['FG']=st.radio("FG", ("n","d","da", "s"), horizontal=True)
+    lines['GH']=st.radio("GH", ("n","d","da", "s"), horizontal=True)
+    lines['HE']=st.radio("HE", ("n","d","da", "s"), horizontal=True)
+    lines['AE']=st.radio("AE", ("n","d","da", "s"), horizontal=True)
+    lines['BF']=st.radio("BF", ("n","d","da", "s"), horizontal=True)
+    lines['CG']=st.radio("CG", ("n","d","da", "s"), horizontal=True)
+    lines['DH']=st.radio("DH", ("n","d","da", "s"), horizontal=True)
+        
+    while True:
+        for i2 in question: 
+            if lines[i2] == "n":
+                lines[i2] = 0
+            elif lines[i2] =="d":
+                lines[i2] = 1
+            elif lines[i2] =="da":
+                lines[i2]= 2
+            elif lines[i2] =="s":
+                lines[i2] = 3
+            lines[i2] = int(lines[i2])
+        break      
+
+test = interface(lines)
+test
+#styleSquare(lines)
+
+#st.pyplot(fig)
